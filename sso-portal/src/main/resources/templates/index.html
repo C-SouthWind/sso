@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="jquery.cookie.js"></script>
+    <script type="text/javascript">
+        $(function () {
+        // 获取当前页面的url地址
+        var currentPage = window.location.href;
+        // 给跳转到登录页面的a标签赋值
+        $("#turn_login_page").prop("href", "http://127.0.0.1:8082/turnLoginPage?returnUrl="+currentPage);
+        // 开始判断用户是否处于登录状态
+        //cookie的key叫做COOKIE_KEY，cookie的value就是redis的key
+        var redisKey = $.cookie("COOKIE_KEY");// 判断redis的key是否存在
+            if(!redisKey) {
+                // redisKey不存在
+                return;
+            }
+            //redis的key是存在的
+            //使用ajax跳转到登录项目中去验证用户是否处于登录状态
+            // token:就是跳转到检测用户是否处于登录的方法(checkLogin())
+            $.ajax({
+                url : "http://127.0.0.1:8081/token/"+redisKey,
+                type : "get",
+                dataType : "jsonp",
+                success : function (data) {
+                    if(data != null) {
+                        // 说明用户处于登录状态，需要把登录按钮隐藏，显示welcome:xxx
+                        var userJson = JSON.parse(data);
+                        $("#login_div").empty();
+                        $("#login_div").append("<h1>welcome:"+userJson.username+"</h1>")
+                    }
+
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="login_div">
+        <a id="turn_login_page">登录</a>
+    </div>
+    <a href="/orderPhone">下单</a>
+</body>
+</html>

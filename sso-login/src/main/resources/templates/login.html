@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            //获取从portal项目中传递过来的页面
+            var returnPage = $("#current_page").text();
+            //执行登录操作
+            $("#do_login").click(function () {
+                $.post("/doLogin",$("#forms").serialize(),function (data) {
+                    //判断data是否为null
+                    if (data != null) {
+                        //登录成功
+                        location.href = returnPage;
+                    }else{
+                        //登录失败 跳转到主页面
+                        location.href = "http://127.0.0.1:8080";
+                    }
+                })
+            })
+        })
+    </script>
+</head>
+<body>
+
+    <form id="forms">
+        Username:<input type="text" name="username"><br>
+        Password:<input type="password" name="password"><br>
+        <input id="do_login" type="button" value="Submit" />
+    </form>
+<span id="current_page" style="display: none;" th:text="${returnUrl}"></span>
+</body>
+</html>
